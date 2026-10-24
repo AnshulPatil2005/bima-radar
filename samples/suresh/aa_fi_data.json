@@ -1,0 +1,50 @@
+{
+  "note": "Deposit account FI data in a simplified form of the ReBIT Account Aggregator schema, trimmed to the rows that matter. x_scheme is a bank-specific extension used by the sample.",
+  "fipId": "MYBANK-FIP",
+  "account": {
+    "type": "deposit",
+    "maskedAccNumber": "XXXXXXXX4821",
+    "linkedAccRef": "a1f0c9e2-4821",
+    "profile": {
+      "holders": {
+        "type": "SINGLE",
+        "holder": [{"name": "SURESH KUMAR", "dob": "1992-03-14", "nominee": "REGISTERED"}]
+      }
+    },
+    "summary": {
+      "currentBalance": "210.00",
+      "currency": "INR",
+      "balanceDateTime": "2026-05-26T12:40:00+05:30",
+      "type": "SAVINGS",
+      "branch": "ALAMBAGH, LUCKNOW",
+      "ifscCode": "MYBK0001234",
+      "openingDate": "2019-03-12",
+      "status": "ACTIVE",
+      "x_scheme": "PMJDY"
+    },
+    "transactions": {
+      "startDate": "2025-05-28",
+      "endDate": "2026-05-27",
+      "transaction": [
+        {"txnId": "T2506010001", "type": "DEBIT", "mode": "OTHERS", "amount": "20.00", "currentBalance": "1240.50",
+         "transactionTimestamp": "2025-06-01T09:14:00+05:30", "valueDate": "2025-06-01", "narration": "PMSBY PREMIUM 2025-26", "reference": "JS2506PMSBY"},
+        {"txnId": "T2506010002", "type": "DEBIT", "mode": "OTHERS", "amount": "436.00", "currentBalance": "804.50",
+         "transactionTimestamp": "2025-06-01T09:15:00+05:30", "valueDate": "2025-06-01", "narration": "PMJJBY PREMIUM 2025-26", "reference": "JS2506PMJJBY"},
+        {"txnId": "T2601050007", "type": "DEBIT", "mode": "OTHERS", "amount": "3310.00", "currentBalance": "2210.00",
+         "transactionTimestamp": "2026-01-05T07:01:00+05:30", "valueDate": "2026-01-05", "narration": "NACH/TW-88213/EMI", "reference": "NACH0105"},
+        {"txnId": "T2602140011", "type": "DEBIT", "mode": "ATM", "amount": "2000.00", "currentBalance": "1840.00",
+         "transactionTimestamp": "2026-02-14T13:20:00+05:30", "valueDate": "2026-02-14", "narration": "ATM WDL/RUPAY 6521XXXX4821/ALAMBAGH", "reference": "ATM0214"},
+        {"txnId": "T2603190014", "type": "DEBIT", "mode": "CARD", "amount": "450.00", "currentBalance": "3915.00",
+         "transactionTimestamp": "2026-03-19T18:42:00+05:30", "valueDate": "2026-03-19", "narration": "POS/RUPAY 6521XXXX4821/KIRANA STORE LKO", "reference": "POS0319"},
+        {"txnId": "T2604220019", "type": "CREDIT", "mode": "UPI", "amount": "500.00", "currentBalance": "4415.00",
+         "transactionTimestamp": "2026-04-22T21:05:00+05:30", "valueDate": "2026-04-22", "narration": "UPI/DELIVERY PAYOUT/WEEK16", "reference": "UPI0422"},
+        {"txnId": "T2605050021", "type": "DEBIT", "mode": "OTHERS", "amount": "3310.00", "currentBalance": "1105.00",
+         "transactionTimestamp": "2026-05-05T07:01:00+05:30", "valueDate": "2026-05-05", "narration": "NACH/TW-88213/EMI", "reference": "NACH0505"},
+        {"txnId": "T2605210024", "type": "DEBIT", "mode": "UPI", "amount": "745.45", "currentBalance": "359.55",
+         "transactionTimestamp": "2026-05-21T19:02:00+05:30", "valueDate": "2026-05-21", "narration": "UPI/PAYTM/IRCTC TICKET", "reference": "UPI0521"},
+        {"txnId": "T2605260026", "type": "DEBIT", "mode": "UPI", "amount": "149.55", "currentBalance": "210.00",
+         "transactionTimestamp": "2026-05-26T12:40:00+05:30", "valueDate": "2026-05-26", "narration": "UPI/PAYTM/PHARMACY", "reference": "UPI0526"}
+      ]
+    }
+  }
+}

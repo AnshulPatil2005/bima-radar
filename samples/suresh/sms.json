@@ -1,0 +1,16 @@
+[
+  {"id": "s101", "sender": "AD-MYBANK", "received_at": "2025-06-01T09:14:00+05:30",
+   "body": "Rs 20.00 debited from A/c XX4821 on 01-Jun-25 towards PMSBY premium. Avl bal Rs 1,240.50 -MYBANK"},
+  {"id": "s102", "sender": "AD-MYBANK", "received_at": "2025-06-01T09:15:00+05:30",
+   "body": "Rs 436.00 debited from A/c XX4821 on 01-Jun-25 towards PMJJBY renewal. Avl bal Rs 804.50 -MYBANK"},
+  {"id": "s140", "sender": "VM-MYBANK", "received_at": "2026-03-19T18:42:00+05:30",
+   "body": "Rs 450.00 spent on RuPay Debit Card XX4821 at KIRANA STORE LKO on 19-Mar-26. Avl bal Rs 3,915.00 -MYBANK"},
+  {"id": "s151", "sender": "AX-OTPSRV", "received_at": "2026-05-02T11:03:00+05:30",
+   "body": "482913 is your OTP to log in. Do not share it with anyone."},
+  {"id": "s155", "sender": "VM-MYBANK", "received_at": "2026-05-05T07:01:00+05:30",
+   "body": "Rs 3,310.00 debited from A/c XX4821 by NACH for loan TW-88213 EMI. Avl bal Rs 1,105.00 -MYBANK"},
+  {"id": "s163", "sender": "JM-RECHRG", "received_at": "2026-05-12T20:30:00+05:30",
+   "body": "Recharge of Rs 299 successful for 98XXXXXX21. Validity 28 days."},
+  {"id": "s171", "sender": "VM-MYBANK", "received_at": "2026-05-26T12:40:00+05:30",
+   "body": "Rs 149.55 debited from A/c XX4821 by UPI/PHARMACY. Avl bal Rs 210.00 -MYBANK"}
+]

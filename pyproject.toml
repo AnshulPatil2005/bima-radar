@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bima-radar"
+version = "0.1.0"
+description = "Finds the insurance people already have, warns before it lapses, and prepares the family's claims."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "uvicorn>=0.29"]
+llm = ["anthropic>=1.0"]
+pdf = ["pypdf>=4.0"]
+dev = ["pytest>=8.0", "httpx>=0.27", "fastapi>=0.110"]
+
+[project.scripts]
+bima-radar = "bima_radar.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["bima_radar*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

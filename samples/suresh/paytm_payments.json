@@ -1,0 +1,8 @@
+[
+  {"id": "p9001", "at": "2026-05-12T20:30:00+05:30", "type": "recharge", "merchant": "MOBILE RECHARGE", "mcc": "4814", "amount": 299.0, "meta": {}},
+  {"id": "p9007", "at": "2026-05-21T19:02:00+05:30", "type": "train_booking", "merchant": "IRCTC", "mcc": "4112", "amount": 745.45,
+   "meta": {"pnr": "4217730954", "from": "LKO", "to": "NDLS", "journey_date": "2026-06-02", "class": "3A", "passenger": "SURESH KUMAR",
+            "travel_insurance": true, "insurance_premium": 0.45, "nominee": null}},
+  {"id": "p9012", "at": "2026-05-26T12:40:00+05:30", "type": "payment", "merchant": "CITY CARE HOSPITAL LUCKNOW", "mcc": "8062", "amount": 38000.0,
+   "meta": {"instrument": "Paytm Postpaid", "note": "Dengue admission, 3 nights"}}
+]

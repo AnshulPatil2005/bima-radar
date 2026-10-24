@@ -1,0 +1,17 @@
+GANGA TWO-WHEELER FINANCE LTD (sample lender)
+Sanction letter and repayment schedule
+
+Loan No: TW-88213
+Borrower: SURESH KUMAR
+Vehicle: 110cc motorcycle, UP32 XX 4471
+Disbursed on: 14-Dec-2024
+Loan amount: Rs 68,000
+Tenure: 24 months
+
+Charges added to the loan
+Processing fee: Rs 1,200
+Loan protection premium (group credit life, sum assured = principal outstanding): Rs 2,450
+Certificate of insurance issued under the lender's group policy.
+
+EMI: Rs 3,310 payable on the 5th of every month from 05-Jan-2025 by NACH from A/c XX4821
+Principal outstanding as on 05-May-2026: Rs 41,200

@@ -1,0 +1,17 @@
+{
+  "note": "Synthetic sample. Suresh, Sunita, every account, card, loan and PNR here are invented.",
+  "as_of": "2026-05-28",
+  "person": {
+    "name": "Suresh Kumar",
+    "name_hi": "सुरेश",
+    "dob": "1992-03-14",
+    "city": "Lucknow",
+    "occupation": "Delivery rider"
+  },
+  "nominee": {
+    "name": "Sunita Kumar",
+    "name_hi": "सुनीता",
+    "relation": "Wife",
+    "account": "XX9035"
+  }
+}
