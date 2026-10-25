@@ -35,7 +35,7 @@ def print_scan(report: dict, folder: Path):
         _out(f"   {s['status']:<20} {s['name']:<32} {s['records']:>3} records")
     if report["llm"]:
         for line in report["llm"]:
-            _out(f"   claude: {line}")
+            _out(f"   gemini: {line}")
 
 
 def print_map(radar: BimaRadar, **what_if):
@@ -171,7 +171,7 @@ def cmd_find(args) -> int:
     covers, how = radar.find_in_text(args.text, use_llm=args.llm, save=args.save)
     _out(f"Read by: {how}")
     if not covers:
-        _out("No cover found in this text." + ("" if args.llm else " Try --llm to ask Claude."))
+        _out("No cover found in this text." + ("" if args.llm else " Try --llm to ask Gemini."))
     for c in covers:
         _out(f"- {c.name} ({c.kind}) · {lakh(c.sum_insured) if c.sum_insured else 'amount not stated'} · {c.confidence} confidence")
         _out(f"  evidence: \"{c.evidence[0].quote}\"")
@@ -198,7 +198,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     d = sub.add_parser("demo", help="run every stage on the sample family")
     d.add_argument("path", nargs="?", help="sample folder (default: samples/suresh)")
-    d.add_argument("--llm", action="store_true", help="also send unexplained records to Claude")
+    d.add_argument("--llm", action="store_true", help="also send unexplained records to Gemini")
     d.add_argument("--out", help="folder to write the claim pack into")
     d.set_defaults(fn=cmd_demo)
 
@@ -235,7 +235,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     t = sub.add_parser("find", help="find cover in a pasted SMS or document text")
     t.add_argument("text")
-    t.add_argument("--llm", action="store_true", help="ask Claude")
+    t.add_argument("--llm", action="store_true", help="ask Gemini")
     t.add_argument("--save", action="store_true", help="add what is found to the Cover Map")
     t.set_defaults(fn=cmd_find)
 

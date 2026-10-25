@@ -1,6 +1,7 @@
 import json
 import shutil
-from types import SimpleNamespace
+
+import pytest
 
 from bima_radar import llm_finder
 from bima_radar.finder import find_covers
@@ -49,14 +50,17 @@ def test_pasted_sms_is_recognised_by_rules():
     assert covers[0].attrs["account"] == "XX7710"
 
 
-class FakeClient:
-    """Stands in for anthropic.Anthropic so the guard logic can be tested offline."""
+class FakeGemini:
+    """Stands in for the Gemini HTTP call so the guard logic can be tested offline."""
 
-    def __init__(self, payload, stop_reason="end_turn"):
+    def __init__(self, payload, finish="STOP"):
         self.calls = []
-        text = json.dumps(payload)
-        create = lambda **kw: self.calls.append(kw) or SimpleNamespace(stop_reason=stop_reason, content=[SimpleNamespace(type="text", text=text)])
-        self.beta = SimpleNamespace(messages=SimpleNamespace(create=create))
+        self.reply = {"candidates": [{"finishReason": finish, "content": {"parts": [
+            {"text": "thinking about it", "thought": True}, {"text": json.dumps(payload)}]}}]}
+
+    def __call__(self, body):
+        self.calls.append(body)
+        return self.reply
 
 
 def _item(**over):
@@ -69,27 +73,34 @@ TEXT = "Your personal loan of Rs 1,50,000 is disbursed. Charges: Credit Shield i
 
 
 def test_llm_keeps_only_quoted_evidence():
-    client = FakeClient({"covers": [_item(), _item(name="Invented", evidence_quote="free health cover of Rs 5 lakh")]})
-    covers = llm_finder.extract(TEXT, client=client)
+    gemini = FakeGemini({"covers": [_item(), _item(name="Invented", evidence_quote="free health cover of Rs 5 lakh")]})
+    covers = llm_finder.extract(TEXT, post=gemini)
     assert [c.name for c in covers] == ["Credit Shield"]
     assert covers[0].found_by == "llm"
     assert covers[0].sum_insured == 150_000  # stated in the text
 
 
 def test_llm_amount_must_appear_in_text():
-    client = FakeClient({"covers": [_item(sum_insured_inr=900000)]})
-    assert llm_finder.extract(TEXT, client=client)[0].sum_insured is None
+    gemini = FakeGemini({"covers": [_item(sum_insured_inr=900000)]})
+    assert llm_finder.extract(TEXT, post=gemini)[0].sum_insured is None
 
 
 def test_llm_request_shape():
-    client = FakeClient({"covers": []})
-    llm_finder.extract(TEXT, client=client)
-    call = client.calls[0]
-    assert call["model"] == "claude-opus-5-5"
-    assert call["output_config"]["format"]["type"] == "json_schema"
-    assert call["fallbacks"] == "default"
+    gemini = FakeGemini({"covers": []})
+    llm_finder.extract(TEXT, post=gemini)
+    config = gemini.calls[0]["generationConfig"]
+    assert config["responseMimeType"] == "application/json"
+    assert config["responseJsonSchema"] is llm_finder.SCHEMA
+    assert TEXT in gemini.calls[0]["contents"][0]["parts"][0]["text"]
 
 
-def test_llm_refusal_returns_nothing():
-    client = FakeClient({"covers": [_item()]}, stop_reason="refusal")
-    assert llm_finder.extract(TEXT, client=client) == []
+def test_llm_blocked_answer_returns_nothing():
+    gemini = FakeGemini({"covers": [_item()]}, finish="SAFETY")
+    assert llm_finder.extract(TEXT, post=gemini) == []
+
+
+def test_llm_without_key_is_unavailable(monkeypatch, tmp_path):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(llm_finder.LLMUnavailable):
+        llm_finder.extract(TEXT)

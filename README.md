@@ -12,17 +12,24 @@ is turning each stage into the production service described under [Full build](#
 
 ```bash
 python -m bima_radar demo            # no dependencies needed
-python -m pytest                     # 26 tests
+python -m pytest                     # 27 tests
 ```
 
 Python 3.11 or newer. The core pipeline uses only the standard library. Optional extras:
 
 ```bash
 pip install -e ".[api]"    # FastAPI server: python -m bima_radar serve
-pip install -e ".[llm]"    # Claude extraction for text the rules can't read
 pip install -e ".[pdf]"    # read PDF loan and policy papers
 pip install -e ".[dev]"    # tests
 ```
+
+The AI step calls Gemini over plain HTTPS, so it needs no extra package, only a key from Google AI Studio:
+
+```bash
+cp .env.example .env       # then paste your key after GEMINI_API_KEY=
+```
+
+`.env` is git-ignored. `GEMINI_MODEL` picks another model (default `gemini-3.5-flash`).
 
 ## The pipeline
 
@@ -33,7 +40,7 @@ pip install -e ".[dev]"    # tests
  AA statement         ─┼─▶ PMJJBY, RuPay PMJDY, ─▶  cover, with the  ─▶ lapse guard: warn before ─▶ forms filled from the map
  loan / policy papers ─┤   loan protection,         line it came        it stops                    one merged list of papers
  Paytm payments       ─┘   train travel cover;      from (SQLite)       matcher: one event against  deadlines, tracking
-                           Claude for the rest                          every cover, with reasons   Hindi / English messages
+                           Gemini for the rest                          every cover, with reasons   Hindi / English messages
                                                          ▲
                                Event Watcher ────────────┘
                                hospital bills from payments, deaths and accidents reported by the family
@@ -42,7 +49,7 @@ pip install -e ".[dev]"    # tests
 | Stage | Module | What it does now |
 |---|---|---|
 | Ingestion | `sources.py` | Reads only the sources switched on in `consent.json`: an SMS export, Account Aggregator FI data (simplified ReBIT deposit layout), loan papers (.txt or .pdf), a Paytm payments export. |
-| Cover Finder | `finder.py`, `llm_finder.py` | Rules recognise five bundled covers and merge evidence for the same cover across sources. Anything mentioning insurance that the rules can't explain can go to Claude (`claude-opus-5-5`, structured output). Claude's answer is kept only if its quoted evidence appears in the text, and amounts for known schemes always come from `schemes.py`. |
+| Cover Finder | `finder.py`, `llm_finder.py` | Rules recognise five bundled covers and merge evidence for the same cover across sources. Anything mentioning insurance that the rules can't explain can go to Gemini (`gemini-3.5-flash`, JSON-schema output). Gemini's answer is kept only if its quoted evidence appears in the text, and amounts for known schemes always come from `schemes.py`. |
 | Cover Map | `store.py`, `context.py` | Covers, events and claim packs in SQLite. Context holds the facts the rules need: last qualifying card use, balances, the nominee. |
 | Rules engine | `rules.py`, `schemes.py` | Per-cover rules: RuPay needs a card payment within 90 days before an accident; PMSBY/PMJJBY need this cover year's premium and money for the 31 May renewal; train cover applies only to its own journey; loan protection pays the lender what is left. |
 | Event Watcher | `watcher.py` | Hospital payments (MCC 8062 and others) become events; deaths and accidents are reported. |
@@ -95,15 +102,28 @@ python -m bima_radar scan samples/suresh
 python -m bima_radar alerts --card-days 95 --balance 120
 python -m bima_radar event death --cause accident --card-days 95
 python -m bima_radar find "Rs 436.00 debited from A/c XX7710 towards PMJJBY renewal" 
-python -m bima_radar find "<any SMS or loan paragraph>" --llm     # needs the llm extra and Anthropic credentials
+python -m bima_radar find "<any SMS or loan paragraph>" --llm     # needs GEMINI_API_KEY
+```
+
+A live run of the AI step on a message the rules have no pattern for:
+
+```
+$ python -m bima_radar find "Dear Customer, Rs 3,150 has been debited from your loan a/c PL-55120 towards
+  Credit Shield insurance premium. Sum assured Rs 1,50,000 covers your outstanding loan in case of death.
+  -SAMPLE BANK" --llm
+Read by: gemini
+- Credit Shield Insurance (Loan) · ₹1.5 lakh · high confidence
+  evidence: "Rs 3,150 has been debited from your loan a/c PL-55120 towards Credit Shield insurance premium.
+  Sum assured Rs 1,50,000 covers your outstanding loan in case of death."
+  pays: Pays your remaining loan amount if you die.
 ```
 
 ## Status of each part
 
 - Rules, matcher, lapse guard, claim builder, Hindi/English messages, CLI and API: working, covered by tests.
-- Claude extraction: implemented and unit-tested against a stand-in client (request shape, evidence guard,
-  amount guard, refusals). It has not yet been run against the live API from this repository; without
-  credentials the pipeline falls back to rules and says so.
+- Gemini extraction: runs against the live Gemini API, and is unit-tested offline against a stand-in
+  (request shape, evidence guard, amount guard, blocked answers, missing key). A busy model is retried
+  twice; without a key or a connection the pipeline falls back to rules and says so.
 - Scheme numbers in `schemes.py` are a simplified reading of the public rules and must be re-checked
   against current notifications before any real use.
 
@@ -114,7 +134,7 @@ What the next stage adds to each part of this slice:
 | Stage | This repository | Full build |
 |---|---|---|
 | Ingestion | Files in the real formats | Account Aggregator FIU integration, on-device SMS reader in the Paytm app, DigiLocker pull, live Paytm payment stream (Kafka) |
-| Cover Finder | Rules for 5 covers, Claude for the rest | Employer group health, credit-card air accident, LPG cover; per-bank card-use rules; evaluation set of real (consented, redacted) messages |
+| Cover Finder | Rules for 5 covers, Gemini for the rest | Employer group health, credit-card air accident, LPG cover; per-bank card-use rules; evaluation set of real (consented, redacted) messages |
 | Cover Map | SQLite | PostgreSQL, encryption at rest, consent ledger under the DPDP Act 2023, delete on request |
 | Rules engine | Simplified scheme rules | Rules versioned against scheme notifications, with tests per rule change |
 | Event Watcher | MCC rules and reported events | Streaming detection, trusted-contact flows for family mode |
@@ -126,5 +146,5 @@ What the next stage adds to each part of this slice:
 ```
 bima_radar/   pipeline code (one module per stage)
 samples/      synthetic consented data for one family
-tests/        26 tests across finder, rules, matcher, claims, API
+tests/        27 tests across finder, rules, matcher, claims, API
 ```

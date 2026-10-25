@@ -1,7 +1,7 @@
 """Stage 2 · Cover Finder. Turns plain Records into Covers, with the line each one came from.
 
 The rules here recognise the bundled covers the pitch is about. Anything they cannot
-explain can be sent to the Claude extractor in llm_finder.py.
+explain can be sent to the Gemini extractor in llm_finder.py.
 """
 
 from __future__ import annotations
@@ -134,6 +134,6 @@ INSURANCE_HINT_RE = re.compile(r"insur|bima|policy|cover|protect|shield|assured|
 
 
 def unexplained(records: list[Record], covers: list[Cover]) -> list[Record]:
-    """Records that mention insurance but did not become a cover. These go to the Claude extractor."""
+    """Records that mention insurance but did not become a cover. These go to the Gemini extractor."""
     used = {e.ref for c in covers for e in c.evidence}
     return [r for r in records if r.ref not in used and INSURANCE_HINT_RE.search(r.text)]

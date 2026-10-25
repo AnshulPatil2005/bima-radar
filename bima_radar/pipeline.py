@@ -103,9 +103,9 @@ class BimaRadar:
         if use_llm:
             try:
                 covers = llm_finder.extract(text, "text", "text:pasted") or covers
-                how = "claude"
+                how = "gemini"
             except llm_finder.LLMUnavailable as e:
-                how = f"rules (Claude unavailable: {e})"
+                how = f"rules (Gemini unavailable: {e})"
         if save:
             for c in covers:
                 self.store.add_cover(c)
